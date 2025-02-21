@@ -1,0 +1,20 @@
+<main>
+  <h1 class="dancing-script">{{ title }}</h1>
+
+  <div class="input-container">
+    <input type="text" class="styled-input" id="name" name ="name" placeholder="Entrez votre pseudo" (change)="onChangeEvent($event)" />
+  </div>
+
+  <h2>Sélectionnez un mode de jeu</h2>
+
+  <div class="button-container">
+    <div *ngFor="let grid of gridIds" class="mode-container">
+      <div class="preview-box"></div>
+      <button (click)="onClickStartGame(grid.id)">Mode {{ grid.mode }}</button>
+    </div>
+  </div>
+
+  <p class="sign">Léa & Jade</p>
+
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,14 @@
+
+@font-face {
+    font-family: Bodo;
+    src: url("../../public/BodoAmat.ttf");
+}
+
+* {
+  font-family: Bodo, serif;
+}
+
+main {
+    height:100%;
+    display: block;
+}

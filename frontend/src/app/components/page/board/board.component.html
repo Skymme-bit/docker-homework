@@ -1,0 +1,43 @@
+<main>
+  <h1>{{ title }}</h1>
+  <div class="container">
+    <div class="column">
+      <div *ngIf="isGameReady$ | async">
+      <div class="history-container custom-tree-history">
+        <io-tree-history style="height: 90%" [style.width]="'100%'" [cmdViewWidth]="200" [cmdViewHeight]="200"[rootRenderer]="rootRenderer()"></io-tree-history>
+      </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="grille" *ngIf="isGameReady$ | async">
+        <div *ngFor="let tile of gameService.gridTiles; let x = index"
+             class="tile"
+             [attr.data-x]="x"
+             [ngClass]="{
+         'color-background': tile.isColored,
+         'hoverable': tile.name !== 'vide' && tile.isHoverable
+       }">
+          <ng-container *ngIf="tile.name !== 'vide'">
+            <img
+              (click)="setValue(x); gameService.moveTile(x)"
+              (keydown.enter)="gameService.moveTile(x)"
+              tabindex="0"
+              [src]="tile.path"
+              alt="Tile Image"
+              style="width: 100%; height: 100%; object-fit: cover;">
+          </ng-container>
+        </div>
+      </div>
+      <div class="card objective">Objectif</div>
+      <app-objectif></app-objectif>
+    </div>
+    <div class="column">
+      <button (click)="openScorePopup()">Afficher le score</button>
+      <h2>Joueur : {{ gameService.playerName }}</h2>
+      <h2>Coups : {{ gameService.score }}</h2>
+      <ng-container *ngIf="gameService.isGameEnd">
+        <h2>FINI</h2>
+      </ng-container>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Fin de Partie</h2>
+<mat-dialog-content>
+  <p>Félicitations, la partie est terminée ! Voici le classement :</p>
+  <table>
+    <thead>
+    <tr>
+      <th>Joueur</th>
+      <th>Score</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let player of gameService.top5Rankings | async">
+      <td>{{ player.idPlayer }}</td>
+      <td>{{ player.score }}</td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="dialog-actions">
+    <button (click)="closeDialog()">Fermer</button>
+    <button (click)="navigateToMenu()">Menu</button>
+  </div>
+</mat-dialog-content>

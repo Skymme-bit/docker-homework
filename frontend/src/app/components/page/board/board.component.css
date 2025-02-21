@@ -1,0 +1,132 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.column {
+  display: flex;
+  flex: 1;
+  padding: 0 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.column:last-child {
+  align-items: flex-start;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+  font-size: 60px;
+}
+
+h2 {
+  color: white;
+  font-size: 30px;
+}
+
+.card {
+  background-color: #802637;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  width: 400px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.objective {
+  margin-top: 20px;
+}
+
+button {
+  background-color: #ffffff;
+  color: #802637;
+  font-weight: bold;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: 200px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #802637;
+  color: white;
+}
+
+.history-container {
+  flex: 0 0 35%;
+  width:400px;
+  margin-left: 20px;
+}
+
+.board-container {
+flex: 0 0 65%;
+padding-left: 10px;
+}
+
+
+div {
+  --size-cell: 100px;
+  --nb-cell: 4;
+}
+
+.grille {
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(var(--size-cell) * var(--nb-cell) + 14px * (var(--nb-cell) - 1));
+  border: 3px solid #802637;
+  background-color: #d9d9d9;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.history-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: calc(var(--size-cell) * var(--nb-cell) + 14px * (var(--nb-cell) - 1));
+  height: calc(var(--size-cell) * var(--nb-cell) + 260px);
+  border: 3px solid #802637;
+  background-color: #d9d9d9;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.tile {
+  background-color: white;
+  width: var(--size-cell);
+  height: var(--size-cell);
+  text-align: center;
+  line-height: 80px;
+  font-size: large;
+  color: white;
+  box-shadow: inset 0 0 0 3px #802637;
+  padding: 10px;
+  box-sizing: border-box;
+  margin: 5px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transition générale */
+}
+
+.tile.hoverable:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.color-background {
+  background-color: #b46575;
+}
+
+
+.no-scroll-dialog .mat-dialog-container {
+  overflow: hidden !important; /* Désactive le défilement */
+  padding: 0; /* Supprime les marges internes */
+  max-height: 100vh; /* S'assure que la boîte de dialogue ne dépasse pas la hauteur de l'écran */
+  box-shadow: none; /* Supprime les ombres si nécessaire */
+}
+

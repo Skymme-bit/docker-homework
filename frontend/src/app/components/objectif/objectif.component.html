@@ -1,0 +1,14 @@
+<div class="column" *ngIf="isGameReady$ | async">
+  <ng-container *ngIf="gameService.currentPattern as currentPattern">
+    <div class="grille">
+      <div *ngFor="let tile of currentPattern.tiles; let x = index" class="tile" [attr.data-x]="x">
+        <img
+          *ngIf="tile.path"
+          [src]="tile.path"
+          alt="Tile Image"
+          style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+    <div class="times" *ngIf="currentPattern.number">x {{currentPattern.number}}</div>
+  </ng-container>
+</div>
