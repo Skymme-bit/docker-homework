@@ -1,22 +1,61 @@
-name: Test SSH Connection to Solace
+name: Deploy to Solace Server
 
 on:
-  workflow_dispatch:  # Allows you to manually trigger the workflow
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  test-ssh:
-    name: Test SSH Connection
-    runs-on: self-hosted
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: self-hosted  # Runs on your Windows self-hosted machine
 
     steps:
-      - name: 🔍 Debug SSH Connection to Solace
-        uses: appleboy/ssh-action@v0.1.4
-        with:
-          host: ${{ secrets.SOLACE_HOST }}
-          username: ${{ secrets.SOLACE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            echo "✅ Connected to Solace!"
-            whoami
-            hostname
-            ls -la ~
+      - name: 🚀 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🔑 Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: 🏗️ Build and push backend Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest -f backend/Dockerfile ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
+
+      - name: 🏗️ Build and push frontend Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest -f frontend/Dockerfile ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
+
+  deploy:
+    name: Deploy to Solace Server
+    needs: build-and-push
+    runs-on: self-hosted  # Runs on your Windows self-hosted runner
+
+    steps:
+      - name: 🚀 Deploy to Solace via Native SSH
+        shell: pwsh  # Use PowerShell on Windows
+        run: |
+          echo "Starting SSH connection to Solace..."
+          
+          $sshPrivateKey = "${{ secrets.SSH_PRIVATE_KEY }}"
+          $sshKeyFile = "$env:USERPROFILE\.ssh\id_rsa"
+          
+          # Save SSH key to file
+          $sshPrivateKey | Out-File -FilePath $sshKeyFile -Encoding ascii
+          chmod 600 $sshKeyFile
+          
+          # Connect to Solace and run deployment commands
+          ssh -i $sshKeyFile -o StrictHostKeyChecking=no ${{ secrets.SOLACE_USER }}@${{ secrets.SOLACE_HOST }} << 'EOF'
+            echo "🔄 Pulling latest Docker images..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
+          
+            echo "📦 Updating application..."
+            cd ~/myapp
+            docker-compose down
+            docker-compose up -d
+
+            echo "✅ Deployment complete!"
+          EOF
