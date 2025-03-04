@@ -23,10 +23,7 @@ jobs:
           Get-ChildItem -Force
 
       - name: 🔑 Log in to Docker Hub
-        run: |
-          $Env:DOCKER_USERNAME = "${{ secrets.DOCKER_USERNAME }}"
-          $Env:DOCKER_PASSWORD = "${{ secrets.DOCKER_PASSWORD }}"
-          echo $Env:DOCKER_PASSWORD | docker login -u $Env:DOCKER_USERNAME --password-stdin
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: 🏗️ Build and push backend Docker image
         run: |
