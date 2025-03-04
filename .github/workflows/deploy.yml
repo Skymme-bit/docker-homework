@@ -9,9 +9,16 @@ jobs:
   docker-login-test:
     runs-on: self-hosted
     steps:
-      - name: Debug Docker Username Encoding
+      - name: Compare Docker Username
         shell: powershell
         run: |
-          $encodedUsername = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${{ secrets.DOCKER_USERNAME }}"))
-          Write-Output "Base64 Encoded Username: $encodedUsername"
+          $actual = "${{ secrets.DOCKER_USERNAME }}"
+          $expected = "jadevaillantrit"
+
+          if ($actual -eq $expected) {
+              Write-Output "✅ Username matches expected value!"
+          } else {
+              Write-Output "❌ Username mismatch! There might be encoding issues."
+          }
+      
       
