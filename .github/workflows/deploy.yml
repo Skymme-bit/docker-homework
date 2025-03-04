@@ -11,7 +11,5 @@ jobs:
     steps:
       - name: Debug Docker Username
         shell: powershell
-        run:
-          echo "Docker Username: '${{ secrets.DOCKER_USERNAME }}'"
-
-      
+        run: |
+          Write-Output "Docker Username: ${{ secrets.DOCKER_USERNAME }}"
