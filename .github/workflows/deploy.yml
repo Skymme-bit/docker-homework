@@ -9,16 +9,14 @@ jobs:
   docker-login-test:
     runs-on: self-hosted
     steps:
-      - name: Compare Docker Username
-        shell: powershell
+      - name: Check system info
         run: |
-          $actual = "${{ secrets.DOCKER_USERNAME }}"
-          $expected = "jadevaillantrit"
+          echo "Running on: ${{ runner.os }}"
+          docker --version
 
-          if ($actual -eq $expected) {
-              Write-Output "✅ Username matches expected value!"
-          } else {
-              Write-Output "❌ Username mismatch! There might be encoding issues."
-          }
-      
-      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Docker login
+        run: |
+          docker info | Select-String "Credential"
