@@ -1,11 +1,22 @@
-- name: 🔍 Debug SSH Connection
-  uses: appleboy/ssh-action@v0.1.4
-  with:
-    host: ${{ secrets.SOLACE_HOST }}
-    username: ${{ secrets.SOLACE_USER }}
-    key: ${{ secrets.SSH_PRIVATE_KEY }}
-    script: |
-      echo "✅ Connected to Solace!"
-      whoami
-      hostname
-      ls -la ~
+name: Test SSH Connection to Solace
+
+on:
+  workflow_dispatch:  # Allows you to manually trigger the workflow
+
+jobs:
+  test-ssh:
+    name: Test SSH Connection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔍 Debug SSH Connection to Solace
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SOLACE_HOST }}
+          username: ${{ secrets.SOLACE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "✅ Connected to Solace!"
+            whoami
+            hostname
+            ls -la ~
