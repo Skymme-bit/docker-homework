@@ -1,20 +1,13 @@
-name: Deploy to Solace Server
+name: Self-Hosted Runner Test
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build-and-push:
-    name: Build & Push Docker Images
+  test:
     runs-on: self-hosted
-
     steps:
-      - name: 🔑 Log in to Docker Hub
-        shell: powershell
-        run: |
-          $DOCKER_USERNAME = "${{ secrets.DOCKER_USERNAME }}"
-          $DOCKER_PASSWORD = "${{ secrets.DOCKER_PASSWORD }}"
-          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+      - name: Run a command
+        run: echo "Self-hosted runner is working!"
