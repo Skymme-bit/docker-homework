@@ -17,9 +17,7 @@ jobs:
 
       - name: 🔑 Print Docker Password (For Debugging)
         shell: "C:/Program Files/Git/bin/bash.exe {0}"  # Ensure Git Bash is used
-        run: |
-          echo "Testing password visibility:"
-          echo "${{ secrets.DOCKER_PASSWORD }}"
+        run: echo "${{ secrets.DOCKER_PASSWORD }}"
 
       - name: 🔑 Log in to Docker Hub
         shell: "C:/Program Files/Git/bin/bash.exe {0}"  # Run in Git Bash
