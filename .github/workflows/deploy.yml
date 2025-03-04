@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Check system info
         run:
-          echo "Docker Username: '${{ secrets.DOCKER_USERNAME }}'"
+          echo "Docker Username: '${{ secrets.DOCKER_USERNAME }}'
