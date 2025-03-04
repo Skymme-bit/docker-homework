@@ -9,7 +9,9 @@ jobs:
   docker-login-test:
     runs-on: self-hosted
     steps:
-      - name: Debug Docker Username
+      - name: Debug Docker Username Encoding
         shell: powershell
         run: |
-          Write-Output "Docker Username: ${{ secrets.DOCKER_USERNAME }}"
+          $encodedUsername = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("${{ secrets.DOCKER_USERNAME }}"))
+          Write-Output "Base64 Encoded Username: $encodedUsername"
+      
