@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-push:
     name: Build & Push Docker Images
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: 🚀 Checkout repository
@@ -27,27 +27,3 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest -f frontend/Dockerfile ./frontend
           docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
-
-  deploy:
-    name: Deploy to Solace Server
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: 🚀 Deploy to Solace via SSH
-        uses: appleboy/ssh-action@v0.1.4
-        with:
-          host: ${{ secrets.SOLACE_HOST }}
-          username: ${{ secrets.SOLACE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            echo "🔄 Pulling latest Docker images..."
-            docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
-            
-            echo "📦 Updating application..."
-            cd ~/myapp
-            docker-compose down
-            docker-compose up -d
-
-            echo "✅ Deployment complete!"
