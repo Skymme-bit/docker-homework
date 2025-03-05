@@ -1,12 +1,14 @@
-name: Docker Self-Hosted Runner Connection Test
+name: Deploy to Solace Server
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   docker-connection-test:
+    name: Verify Docker Setup
     runs-on: self-hosted
     steps:
       - name: Check PowerShell Version in GitHub Actions
@@ -23,7 +25,6 @@ jobs:
         run: |
           $password = "${{ secrets.DOCKER_PASSWORD }}"
           Write-Output "Password Length: $($password.Length)"
-
 
       - name: Verify Docker CLI
         shell: powershell
@@ -45,5 +46,48 @@ jobs:
         shell: powershell
         run: |
           docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-      
-      
+
+  build-and-push:
+    name: Build & Push Docker Images
+    needs: docker-connection-test
+    runs-on: self-hosted
+
+    steps:
+      - name: 🚀 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🏗️ Build and push backend Docker image
+        shell: powershell
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest -f backend/Dockerfile ./backend
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
+
+      - name: 🏗️ Build and push frontend Docker image
+        shell: powershell
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest -f frontend/Dockerfile ./frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
+
+  deploy:
+    name: Deploy to Solace Server
+    needs: build-and-push
+    runs-on: self-hosted
+
+    steps:
+      - name: 🚀 Deploy to Solace via SSH
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.SOLACE_HOST }}
+          username: ${{ secrets.SOLACE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🔄 Pulling latest Docker images..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
+            
+            echo "📦 Updating application..."
+            cd ~/myapp
+            docker-compose down
+            docker-compose up -d
+
+            echo "✅ Deployment complete!"
