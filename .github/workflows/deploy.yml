@@ -1,4 +1,4 @@
-name: Self-Hosted Runner Docker Test
+name: Docker Self-Hosted Runner Connection Test
 
 on:
   push:
@@ -6,21 +6,25 @@ on:
       - main
 
 jobs:
-  docker-login-test:
+  docker-connection-test:
     runs-on: self-hosted
     steps:
-      - name: Check system info
-        run: |
-          echo "Running on: ${{ runner.os }}"
-          docker --version
+      - name: Show Runner User
+        shell: powershell
+        run: whoami
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Log in to Docker Hub
+      - name: Verify Docker CLI
+        shell: powershell
+        env:
+          DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
         run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Verify Docker login
-        run: |
+          echo "Using Docker Host: $env:DOCKER_HOST"
+          docker version
           docker info
+
+      - name: Test Docker Network Connectivity
+        shell: powershell
+        env:
+          DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+        run: |
+          docker pull alpine
