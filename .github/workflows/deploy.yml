@@ -1,39 +1,36 @@
-name: Deploy to Solace Server
+name: Docker Self-Hosted Runner Connection Test
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build-and-push:
-    name: Build & Push Docker Images
-    runs-on: self-hosted  # ✅ Now using your self-hosted runner
-
+  docker-connection-test:
+    runs-on: self-hosted
     steps:
-      - name: 🚀 Checkout repository
-        uses: actions/checkout@v3
+      - name: Show Runner User
+        shell: powershell
+        run: whoami
 
-      - name: 🔑 Log in to Docker Hub
+      - name: Verify Docker CLI
         shell: powershell
         env:
           DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+        run: |
+          echo "Using Docker Host: $env:DOCKER_HOST"
+          docker version
+          docker info
+
+      - name: Test Docker Network Connectivity
+        shell: powershell
+        env:
+          DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
+        run: |
+          docker pull alpine
+
+
+      - name: Log in to Docker Hub
+        shell: powershell
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: 🏗️ Build and push backend Docker image
-        shell: powershell
-        env:
-          DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest -f backend/Dockerfile ./backend
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
-
-      - name: 🏗️ Build and push frontend Docker image
-        shell: powershell
-        env:
-          DOCKER_HOST: ${{ secrets.DOCKER_HOST }}
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest -f frontend/Dockerfile ./frontend
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
