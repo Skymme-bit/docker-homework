@@ -78,16 +78,23 @@ jobs:
         shell: powershell
         run: |
           echo "🔄 Connecting to Solace Server via SSH..."
-          ssh -i $env:SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $env:SOLACE_USER@$env:SOLACE_HOST `
-          "echo '🔄 Pulling latest Docker images...' && `
-           docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest && `
-           docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest && `
-           echo '📦 Updating application...' && `
-           cd ~/myapp && `
-           docker-compose down && `
-           docker-compose up -d && `
-           echo '✅ Deployment complete!'"
+
+          $sshCommand = @"
+          echo '🔄 Pulling latest Docker images...'
+          docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-backend:latest
+          docker pull ${{ secrets.DOCKER_USERNAME }}/docker-homework-frontend:latest
+
+          echo '📦 Updating application...'
+          cd ~/myapp
+          docker-compose down
+          docker-compose up -d
+
+          echo '✅ Deployment complete!'
+          "@
+
+          ssh -i $env:SSH_PRIVATE_KEY -o StrictHostKeyChecking=no $env:SOLACE_USER@$env:SOLACE_HOST "$sshCommand"
         env:
           SOLACE_HOST: ${{ secrets.SOLACE_HOST }}
           SOLACE_USER: ${{ secrets.SOLACE_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
