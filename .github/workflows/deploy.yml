@@ -9,6 +9,11 @@ jobs:
   docker-connection-test:
     runs-on: self-hosted
     steps:
+      - name: Check PowerShell Version in GitHub Actions
+        shell: powershell
+        run: |
+          $PSVersionTable
+
       - name: Show Runner User
         shell: powershell
         run: whoami
